@@ -135,8 +135,12 @@ export class MockHardware implements HardwareService {
   }
 }
 
-// Hardware selection - always try real GPIO first
+// Hardware selection supporting both development and production
 const createHardwareService = (): HardwareService => {
+  // Check environment variable for hardware mode
+  const forceGPIO = process.env.USE_REAL_GPIO === 'true';
+  const forceMock = process.env.USE_MOCK_GPIO === 'true';
+  
   // Check if running on Raspberry Pi
   const isRaspberryPi = () => {
     try {
@@ -148,24 +152,35 @@ const createHardwareService = (): HardwareService => {
     }
   };
 
-  // Always try to use real GPIO hardware first
-  try {
-    const { RealRaspberryPiHardware } = require('./raspberry-pi-gpio');
-    console.log('🔧 Attempting to initialize real Raspberry Pi GPIO hardware');
-    return new RealRaspberryPiHardware();
-  } catch (error) {
-    console.warn('⚠️ Failed to initialize real GPIO hardware:', error.message);
-    
-    if (isRaspberryPi()) {
-      console.log('💡 Install pigpio with: sudo apt install pigpio python3-pigpio');
-      console.log('💡 Install Node wrapper: npm install pigpio');
-      console.log('💡 Run with sudo: sudo npm run dev');
-    } else {
-      console.log('💡 Not running on Raspberry Pi, using mock hardware');
-    }
-    
+  // Force mock if explicitly requested
+  if (forceMock) {
+    console.log('🎭 Using mock hardware (forced by USE_MOCK_GPIO=true)');
     return new MockHardware();
   }
+
+  // Try real GPIO if forced or on Raspberry Pi
+  if (forceGPIO || isRaspberryPi()) {
+    try {
+      const { RealRaspberryPiHardware } = require('./raspberry-pi-gpio');
+      console.log('🔧 Initializing real Raspberry Pi GPIO hardware');
+      return new RealRaspberryPiHardware();
+    } catch (error) {
+      console.warn('⚠️ Failed to initialize real GPIO hardware:', error.message);
+      
+      if (isRaspberryPi() || forceGPIO) {
+        console.log('💡 Install pigpio: sudo apt install pigpio python3-pigpio');
+        console.log('💡 Install Node wrapper: npm install pigpio');
+        console.log('💡 Run with sudo permissions');
+      }
+      
+      console.log('🎭 Falling back to mock hardware');
+      return new MockHardware();
+    }
+  }
+
+  // Default to mock for development
+  console.log('🎭 Using mock hardware for development');
+  return new MockHardware();
 };
 
 export const hardware = createHardwareService();
