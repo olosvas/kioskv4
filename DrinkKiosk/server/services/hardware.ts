@@ -135,7 +135,37 @@ export class MockHardware implements HardwareService {
   }
 }
 
-// Use mock hardware in development, real hardware in production
-export const hardware = process.env.NODE_ENV === 'production' 
-  ? new RaspberryPiHardware() 
-  : new MockHardware();
+// Hardware selection - always try real GPIO first
+const createHardwareService = (): HardwareService => {
+  // Check if running on Raspberry Pi
+  const isRaspberryPi = () => {
+    try {
+      const fs = require('fs');
+      const cpuInfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+      return cpuInfo.includes('Raspberry Pi');
+    } catch {
+      return false;
+    }
+  };
+
+  // Always try to use real GPIO hardware first
+  try {
+    const { RealRaspberryPiHardware } = require('./raspberry-pi-gpio');
+    console.log('🔧 Attempting to initialize real Raspberry Pi GPIO hardware');
+    return new RealRaspberryPiHardware();
+  } catch (error) {
+    console.warn('⚠️ Failed to initialize real GPIO hardware:', error.message);
+    
+    if (isRaspberryPi()) {
+      console.log('💡 Install pigpio with: sudo apt install pigpio python3-pigpio');
+      console.log('💡 Install Node wrapper: npm install pigpio');
+      console.log('💡 Run with sudo: sudo npm run dev');
+    } else {
+      console.log('💡 Not running on Raspberry Pi, using mock hardware');
+    }
+    
+    return new MockHardware();
+  }
+};
+
+export const hardware = createHardwareService();
