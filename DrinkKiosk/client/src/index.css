@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 40%, 98%);
+  --foreground: hsl(222, 84%, 4.9%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 46.9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 84%, 4.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 84%, 4.9%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(142, 71%, 45%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222, 84%, 4.9%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(215, 20%, 65%);
+  --radius: 0.5rem;
+  
+  /* Kiosk specific colors */
+  --kiosk-primary: hsl(207, 90%, 54%);
+  --kiosk-secondary: hsl(142, 71%, 45%);
+  --kiosk-warning: hsl(35, 91%, 56%);
+  --kiosk-error: hsl(0, 84%, 60%);
+}
+
+.dark {
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 32%, 17%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 32%, 17%);
+  --input: hsl(217, 32%, 17%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(222, 84%, 4.9%);
+  --secondary: hsl(142, 71%, 45%);
+  --secondary-foreground: hsl(222, 84%, 4.9%);
+  --accent: hsl(217, 32%, 17%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62%, 30%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(215, 20%, 65%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Roboto', sans-serif;
+    touch-action: manipulation;
+    user-select: none;
+    overflow: hidden;
+    width: 800px;
+    height: 480px;
+  }
+}
+
+@layer components {
+  .beverage-card {
+    transition: all 0.2s ease;
+    height: 140px;
+  }
+  
+  .beverage-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .quantity-btn {
+    transition: all 0.1s ease;
+  }
+  
+  .quantity-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .kiosk-container {
+    width: 800px;
+    height: 480px;
+    max-width: 800px;
+    max-height: 480px;
+  }
+  
+  .kiosk-header {
+    height: 32px;
+  }
+  
+  .beverage-grid {
+    height: 280px;
+  }
+  
+  .cart-width {
+    width: 280px;
+  }
+}
+
+@layer utilities {
+  .text-kiosk-primary {
+    color: var(--kiosk-primary);
+  }
+  
+  .text-kiosk-secondary {
+    color: var(--kiosk-secondary);
+  }
+  
+  .text-kiosk-warning {
+    color: var(--kiosk-warning);
+  }
+  
+  .text-kiosk-error {
+    color: var(--kiosk-error);
+  }
+  
+  .bg-kiosk-primary {
+    background-color: var(--kiosk-primary);
+  }
+  
+  .bg-kiosk-secondary {
+    background-color: var(--kiosk-secondary);
+  }
+  
+  .bg-kiosk-warning {
+    background-color: var(--kiosk-warning);
+  }
+  
+  .bg-kiosk-error {
+    background-color: var(--kiosk-error);
+  }
+}
